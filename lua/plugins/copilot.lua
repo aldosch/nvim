@@ -2,6 +2,12 @@ return {
   "zbirenbaum/copilot.lua",
   cmd = "Copilot",
   event = "InsertEnter",
+  -- Never load in headless mode (no UIs attached). Guards against the Copilot
+  -- LSP node process being spawned during `nvim --headless +Lazy! sync`, which
+  -- fails to shut down cleanly on nvim 0.12 and hangs the quit indefinitely.
+  cond = function()
+    return #vim.api.nvim_list_uis() > 0
+  end,
   config = function()
     require("copilot").setup({
       panel = {
